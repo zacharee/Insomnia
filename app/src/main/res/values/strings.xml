@@ -13,6 +13,8 @@
     <string name="use_infinite">Enable Infinite Time</string>
     <string name="add_time">Add Time</string>
     <string name="reset">Reset</string>
+    <string name="set_time">Set Time</string>
+    <string name="undo">Undo</string>
 
     <!-- Messages -->
     <string name="enable_overlay">Please allow Insomnia to draw over other apps.</string>
@@ -22,4 +24,5 @@
 
     <!-- Other -->
     <string name="time_label_format">%s Seconds</string>
+    <string name="time_removed_format">\"%s Seconds\" Removed</string>
 </resources>

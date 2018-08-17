@@ -1,19 +1,20 @@
 package com.zacharee1.insomnia.util
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.tiles.CycleTile
 import java.util.*
 
-class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapter.Holder>() {
+class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : RecyclerView.Adapter<TimeAdapter.Holder>() {
     private val states = ArrayList(Utils.getSavedTimes(context))
 
     override fun getItemCount() = states.size
@@ -33,6 +34,9 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
             }
         }
 
+        holder.setClickListener(View.OnClickListener { CycleTile.setTime(context, states[holder.adapterPosition].time) })
+        holder.setDragListener(View.OnTouchListener { _, _ -> dragCallback.onStartDrag(holder) })
+
         holder.setTime(state.time)
     }
 
@@ -47,9 +51,11 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
     }
 
     fun removeItemAt(index: Int) {
-        states.removeAt(index)
+        val item = states.removeAt(index)
         notifyItemRemoved(index)
         Utils.saveTimes(context, states)
+
+        itemRemovedCallback.onItemRemoved(item, index)
     }
 
     fun addItem() {
@@ -59,6 +65,11 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
                 notifyItemInserted(states.lastIndex)
             }
         }).show()
+    }
+
+    fun addItemAt(state: CycleTile.WakeState, position: Int) {
+        states.add(position, state)
+        notifyItemInserted(position)
     }
 
     fun reset() {
@@ -74,7 +85,7 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
         var timeSelectedListener: TimeAdapterListener? = null
 
         init {
-            view.setOnClickListener { showDialog() }
+            view.findViewById<ImageView>(R.id.time_config).setOnClickListener { showDialog() }
         }
 
         private fun showDialog() {
@@ -87,6 +98,15 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
                     labelView.context.resources.getString(R.string.time_label_format),
                     (time / 1000))
             labelView.text = format
+        }
+
+        fun setClickListener(listener: View.OnClickListener) {
+            itemView.setOnClickListener(listener)
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        fun setDragListener(listener: View.OnTouchListener) {
+            itemView.findViewById<ImageView>(R.id.handle).setOnTouchListener(listener)
         }
     }
 
@@ -105,5 +125,13 @@ class TimeAdapter(private val context: Context) : RecyclerView.Adapter<TimeAdapt
                 cancel()
             }
         }
+    }
+
+    interface DragCallback {
+        fun onStartDrag(holder: Holder): Boolean
+    }
+
+    interface ItemRemovedCallback {
+        fun onItemRemoved(item: CycleTile.WakeState, position: Int)
     }
 }

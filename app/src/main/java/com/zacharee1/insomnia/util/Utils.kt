@@ -1,10 +1,17 @@
 package com.zacharee1.insomnia.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.preference.PreferenceManager
 import android.text.TextUtils
+import android.util.TypedValue
 import com.google.gson.Gson
 import com.zacharee1.insomnia.tiles.CycleTile
+
+
 
 object Utils {
     const val KEY_USE_INFINITE = "use_infinite"
@@ -39,5 +46,31 @@ object Utils {
 
     fun setUseInfinite(context: Context, useInfinite: Boolean) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_USE_INFINITE, useInfinite).apply()
+    }
+
+    /**
+     * Convert a certain DP value to its equivalent in px
+     * @param context context object
+     * @param dpVal the chosen DP value
+     * @return the DP value in terms of px
+     */
+    fun dpAsPx(context: Context, dpVal: Int) =
+            dpAsPx(context, dpVal.toFloat())
+
+    fun dpAsPx(context: Context, dpVal: Float) =
+            Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.resources.displayMetrics))
+
+    fun drawableToBitmap(drawable: Drawable): Bitmap {
+
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 }

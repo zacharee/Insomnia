@@ -1,11 +1,12 @@
 package com.zacharee1.insomnia.tiles
 
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.drawable.Icon
 import android.os.CountDownTimer
 import android.preference.PreferenceManager
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import android.support.v4.content.LocalBroadcastManager
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.util.Utils
@@ -14,6 +15,9 @@ import java.util.concurrent.TimeUnit
 class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
         const val DELIMITER = "/"
+        const val ACTION_SET_TIME = "com.zacharee1.insomnia.action.SET_TIME"
+
+        const val EXTRA_TIME_MS = "time_ms"
 
         const val TIME_OFF = 0
 
@@ -33,11 +37,26 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
                 WakeState(R.string.time_10, R.drawable.on, TEN_MIN),
                 WakeState(R.string.time_30, R.drawable.on, THIRTY_MIN)
         )
+
+        fun setTime(context: Context, time: Long) {
+            val intent = Intent(ACTION_SET_TIME)
+            intent.putExtra(EXTRA_TIME_MS, time)
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        }
     }
 
     private val app by lazy { App.get(this) }
     private val prefs by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val states = ArrayList<WakeState>()
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when(intent?.action) {
+                ACTION_SET_TIME -> {
+                    if (intent.hasExtra(EXTRA_TIME_MS)) setToTime(intent.getLongExtra(EXTRA_TIME_MS, ZERO_MIN))
+                }
+            }
+        }
+    }
 
     private var timer: CountDownTimer? = null
     private var currentTime = TIME_OFF
@@ -46,10 +65,12 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
     override fun onCreate() {
         populateStates()
         prefs.registerOnSharedPreferenceChangeListener(this)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(ACTION_SET_TIME))
     }
 
     override fun onDestroy() {
         prefs.unregisterOnSharedPreferenceChangeListener(this)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -66,14 +87,18 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
     }
 
     override fun onClick() {
-        stopCountDown()
-
         var newIndex = currentTime + 1
         if (newIndex >= states.size) newIndex = 0
 
-        currentTime = newIndex
+        setToState(newIndex)
+    }
 
-        val newState = states[newIndex]
+    fun setToState(time: Int) {
+        stopCountDown()
+
+        currentTime = time
+
+        val newState = states[time]
 
         qsTile?.icon = Icon.createWithResource(this, newState.icon)
         qsTile?.updateTile()
@@ -99,6 +124,15 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
                 makeCountDown(newState.time)
             }
         }
+    }
+
+    fun setToTime(time: Long) {
+        setToState(getStateIndexByTime(time))
+    }
+
+    fun getStateIndexByTime(time: Long): Int {
+        val filtered = states.filter { it.time == time }
+        return states.indexOf(filtered[0])
     }
 
     private fun setOffState() {
@@ -158,5 +192,13 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
         if (Utils.useInfinite(this)) states.add(STATE_INFINITE)
     }
 
-    class WakeState(val label: Int, val icon: Int, var time: Long)
+    class WakeState(val label: Int, val icon: Int, var time: Long) {
+        override fun equals(other: Any?): Boolean {
+            return (other is WakeState && other.time == time)
+        }
+
+        override fun hashCode(): Int {
+            return time.hashCode()
+        }
+    }
 }
