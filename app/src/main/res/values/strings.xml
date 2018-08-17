@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Insomnia</string>
+
+    <!-- Titles -->
+    <string name="time_1">1:00</string>
+    <string name="time_5">5:00</string>
+    <string name="time_10">10:00</string>
+    <string name="time_30">30:00</string>
+    <string name="time_infinite">&#8734;</string>
+    <string name="configure">Configure</string>
+    <string name="time">Time</string>
+    <string name="custom">Custom</string>
+    <string name="use_infinite">Enable Infinite Time</string>
+    <string name="add_time">Add Time</string>
+    <string name="reset">Reset</string>
+
+    <!-- Messages -->
+    <string name="enable_overlay">Please allow Insomnia to draw over other apps.</string>
+
+    <!-- Hints -->
+    <string name="time_ms">Time (Seconds)</string>
+
+    <!-- Other -->
+    <string name="time_label_format">%s Seconds</string>
+</resources>
