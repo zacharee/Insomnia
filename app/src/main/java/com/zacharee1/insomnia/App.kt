@@ -9,6 +9,7 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.WindowManager
 import android.widget.Toast
+import com.zacharee1.insomnia.util.loge
 import com.zacharee1.insomnia.views.KeepAwakeView
 
 class App : Application() {
@@ -45,7 +46,9 @@ class App : Application() {
 
             try {
                 wm.addView(view, view.params)
-            } catch (e: Exception) {}
+            } catch (e: Exception) {
+                loge(e.localizedMessage)
+            }
 
             isEnabled = true
             true

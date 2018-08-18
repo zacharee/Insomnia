@@ -9,7 +9,10 @@ import android.service.quicksettings.TileService
 import android.support.v4.content.LocalBroadcastManager
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
-import com.zacharee1.insomnia.util.Utils
+import com.zacharee1.insomnia.util.KEY_STATES
+import com.zacharee1.insomnia.util.KEY_USE_INFINITE
+import com.zacharee1.insomnia.util.getSavedTimes
+import com.zacharee1.insomnia.util.useInfinite
 import java.util.concurrent.TimeUnit
 
 class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -75,8 +78,8 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            Utils.KEY_STATES,
-            Utils.KEY_USE_INFINITE -> populateStates()
+            KEY_STATES,
+            KEY_USE_INFINITE -> populateStates()
         }
     }
 
@@ -150,6 +153,7 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
 
     private fun stopCountDown() {
         timer?.cancel()
+        timerRunning = false
     }
 
     private fun makeCountDown(timeMillis: Long) {
@@ -187,9 +191,9 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
         states.clear()
         states.add(STATE_OFF)
 
-        states.addAll(Utils.getSavedTimes(this))
+        states.addAll(getSavedTimes(this))
 
-        if (Utils.useInfinite(this)) states.add(STATE_INFINITE)
+        if (useInfinite(this)) states.add(STATE_INFINITE)
     }
 
     class WakeState(val label: Int, val icon: Int, var time: Long) {

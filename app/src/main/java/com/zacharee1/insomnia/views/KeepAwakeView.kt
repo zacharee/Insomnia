@@ -14,7 +14,7 @@ class KeepAwakeView(context: Context) : View(context) {
             width = 1
             y = -3
             gravity = Gravity.LEFT or Gravity.BOTTOM
-            type = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            type = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
                     else WindowManager.LayoutParams.TYPE_PRIORITY_PHONE
             flags = WindowManager.LayoutParams.FLAG_SLIPPERY or
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -28,6 +28,6 @@ class KeepAwakeView(context: Context) : View(context) {
     }
 
     init {
-        setBackgroundColor(Color.TRANSPARENT)
+        setBackgroundColor(Color.YELLOW)
     }
 }
