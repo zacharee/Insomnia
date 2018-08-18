@@ -17,33 +17,33 @@ const val TAG = "Insomnia"
 const val KEY_USE_INFINITE = "use_infinite"
 const val KEY_STATES = "states"
 
-fun loge(message: String) {
-    Log.e(TAG, message)
+fun String.loge() {
+    Log.e(TAG, this)
 }
 
-fun logv(message: String) {
-    Log.v(TAG, message)
+fun String.logv() {
+    Log.v(TAG, this)
 }
 
-fun logi(message: String) {
-    Log.i(TAG, message)
+fun String.logi() {
+    Log.i(TAG, this)
 }
 
-fun logd(message: String) {
-    Log.d(TAG, message)
+fun String.logd() {
+    Log.d(TAG, this)
 }
 
-fun logw(message: String) {
-    Log.w(TAG, message)
+fun String.logw() {
+    Log.w(TAG, this)
 }
 
-fun loga(message: String) {
-    Log.println(Log.ASSERT, TAG, message)
+fun String.loga() {
+    Log.println(Log.ASSERT, TAG, this)
 }
 
-fun getSavedTimes(context: Context): ArrayList<CycleTile.WakeState> {
+fun Context.getSavedTimes(): ArrayList<CycleTile.WakeState> {
     val gson = Gson()
-    val strings = PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_STATES, null) ?: return CycleTile.DEFAULT_STATES
+    val strings = PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STATES, null) ?: return CycleTile.DEFAULT_STATES
     val ret = ArrayList<CycleTile.WakeState>()
 
     strings.split(CycleTile.DELIMITER).forEach {
@@ -54,7 +54,7 @@ fun getSavedTimes(context: Context): ArrayList<CycleTile.WakeState> {
     return ret
 }
 
-fun saveTimes(context: Context, times: ArrayList<CycleTile.WakeState>) {
+fun Context.saveTimes(times: ArrayList<CycleTile.WakeState>) {
     val gson = Gson()
     val strings = ArrayList<String>()
 
@@ -62,38 +62,36 @@ fun saveTimes(context: Context, times: ArrayList<CycleTile.WakeState>) {
         strings.add(gson.toJson(it))
     }
 
-    PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_STATES, TextUtils.join(CycleTile.DELIMITER, strings)).apply()
+    PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STATES, TextUtils.join(CycleTile.DELIMITER, strings)).apply()
 }
 
-fun useInfinite(context: Context)
-        = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(KEY_USE_INFINITE, true)
+fun Context.useInfinite()
+        = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(KEY_USE_INFINITE, true)
 
-fun setUseInfinite(context: Context, useInfinite: Boolean) {
-    PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(KEY_USE_INFINITE, useInfinite).apply()
+fun Context.setUseInfinite(useInfinite: Boolean) {
+    PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(KEY_USE_INFINITE, useInfinite).apply()
 }
 
 /**
  * Convert a certain DP value to its equivalent in px
- * @param context context object
  * @param dpVal the chosen DP value
  * @return the DP value in terms of px
  */
-fun dpAsPx(context: Context, dpVal: Int) =
-        dpAsPx(context, dpVal.toFloat())
+fun Context.dpAsPx(dpVal: Int) =
+        dpAsPx(dpVal.toFloat())
 
-fun dpAsPx(context: Context, dpVal: Float) =
-        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, context.resources.displayMetrics))
+fun Context.dpAsPx(dpVal: Float) =
+        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, resources.displayMetrics))
 
-fun drawableToBitmap(drawable: Drawable): Bitmap {
-
-    if (drawable is BitmapDrawable) {
-        return drawable.bitmap
+fun Drawable.toBitmap(): Bitmap {
+    if (this is BitmapDrawable) {
+        return bitmap
     }
 
-    val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
+    setBounds(0, 0, canvas.width, canvas.height)
+    draw(canvas)
 
     return bitmap
 }

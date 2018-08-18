@@ -191,9 +191,9 @@ class CycleTile : TileService(), SharedPreferences.OnSharedPreferenceChangeListe
         states.clear()
         states.add(STATE_OFF)
 
-        states.addAll(getSavedTimes(this))
+        states.addAll(getSavedTimes())
 
-        if (useInfinite(this)) states.add(STATE_INFINITE)
+        if (useInfinite()) states.add(STATE_INFINITE)
     }
 
     class WakeState(val label: Int, val icon: Int, var time: Long) {

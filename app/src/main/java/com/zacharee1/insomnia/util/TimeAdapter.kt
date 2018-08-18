@@ -15,7 +15,7 @@ import com.zacharee1.insomnia.tiles.CycleTile
 import java.util.*
 
 class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : RecyclerView.Adapter<TimeAdapter.Holder>() {
-    private val states = ArrayList(getSavedTimes(context))
+    private val states = ArrayList(context.getSavedTimes())
 
     override fun getItemCount() = states.size
 
@@ -30,7 +30,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
             override fun newTime(time: Long) {
                 state.time = time
                 holder.setTime(time)
-                saveTimes(context, states)
+                context.saveTimes(states)
             }
         }
 
@@ -45,7 +45,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
 
         states.add(to, state)
         notifyItemMoved(from, to)
-        saveTimes(context, states)
+        context.saveTimes(states)
 
         return true
     }
@@ -53,7 +53,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     fun removeItemAt(index: Int) {
         val item = states.removeAt(index)
         notifyItemRemoved(index)
-        saveTimes(context, states)
+        context.saveTimes(states)
 
         itemRemovedCallback.onItemRemoved(item, index)
     }
@@ -75,7 +75,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     fun reset() {
         states.clear()
         states.addAll(CycleTile.DEFAULT_STATES)
-        saveTimes(context, states)
+        context.saveTimes(states)
         notifyDataSetChanged()
     }
 

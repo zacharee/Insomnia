@@ -18,11 +18,7 @@ import android.view.LayoutInflater
 import android.widget.Switch
 import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.tiles.CycleTile
-import com.zacharee1.insomnia.util.TimeAdapter
-import com.zacharee1.insomnia.util.dpAsPx
-import com.zacharee1.insomnia.util.drawableToBitmap
-import com.zacharee1.insomnia.util.setUseInfinite
-import com.zacharee1.insomnia.util.useInfinite
+import com.zacharee1.insomnia.util.*
 import java.util.*
 
 
@@ -48,7 +44,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
                 val p = Paint()
                 val drawable = ContextCompat.getDrawable(this@TimesConfigureActivity, R.drawable.delete)!!.mutate()
                 drawable.setTint(Color.WHITE)
-                val icon: Bitmap = drawableToBitmap(drawable)
+                val icon: Bitmap = drawable.toBitmap()
 
                 if (dX > 0) {
                     p.setARGB(255, 255, 0, 0)
@@ -57,7 +53,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
                             itemView.bottom.toFloat(), p)
 
                     c.drawBitmap(icon,
-                            itemView.left.toFloat() + dpAsPx(this@TimesConfigureActivity, 16),
+                            itemView.left.toFloat() + dpAsPx(16),
                             itemView.top.toFloat() + (itemView.bottom.toFloat() - itemView.top.toFloat() - icon.height.toFloat()) / 2,
                             p)
                 } else {
@@ -67,7 +63,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
                             itemView.right.toFloat(), itemView.bottom.toFloat(), p)
 
                     c.drawBitmap(icon,
-                            itemView.right.toFloat() - dpAsPx(this@TimesConfigureActivity, 16) - icon.width,
+                            itemView.right.toFloat() - dpAsPx(16) - icon.width,
                             itemView.top.toFloat() + (itemView.bottom.toFloat() - itemView.top.toFloat() - icon.height.toFloat()) / 2,
                             p)
                 }
@@ -89,8 +85,8 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
         setUpActionBar()
 
         val useInfinite = findViewById<Switch>(R.id.use_infinite)
-        useInfinite.isChecked = useInfinite(this)
-        useInfinite.setOnCheckedChangeListener { _, isChecked -> setUseInfinite(this, isChecked) }
+        useInfinite.isChecked = this@TimesConfigureActivity.useInfinite()
+        useInfinite.setOnCheckedChangeListener { _, isChecked -> setUseInfinite(isChecked) }
 
         val recycler = findViewById<RecyclerView>(R.id.recycler)
 

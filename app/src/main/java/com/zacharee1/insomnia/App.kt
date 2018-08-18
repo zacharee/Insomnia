@@ -47,7 +47,7 @@ class App : Application() {
             try {
                 wm.addView(view, view.params)
             } catch (e: Exception) {
-                loge(e.localizedMessage)
+                e.localizedMessage.loge()
             }
 
             isEnabled = true
