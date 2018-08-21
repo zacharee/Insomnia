@@ -1,9 +1,11 @@
 package com.zacharee1.insomnia
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.*
 import android.net.Uri
 import android.os.CountDownTimer
+import android.os.PowerManager
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.content.LocalBroadcastManager
@@ -13,7 +15,6 @@ import com.zacharee1.insomnia.tiles.CycleTile
 import com.zacharee1.insomnia.util.KEY_STATES
 import com.zacharee1.insomnia.util.WakeState
 import com.zacharee1.insomnia.util.getSavedTimes
-import com.zacharee1.insomnia.util.loge
 import com.zacharee1.insomnia.views.KeepAwakeView
 
 class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -46,6 +47,8 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     val wm by lazy { getSystemService(Context.WINDOW_SERVICE) as WindowManager }
+    val pm by lazy { getSystemService(Context.POWER_SERVICE) as PowerManager }
+    val wakelock by lazy { pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "Insomnia") }
     val view by lazy { KeepAwakeView(this) }
     val states = ArrayList<WakeState>()
 
@@ -78,33 +81,41 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
+    @SuppressLint("WakelockTimeout")
     fun enable(): Boolean {
-        return if (Settings.canDrawOverlays(this)) {
-            try {
-                wm.removeView(view)
-            } catch (e: Exception) {}
-
-            try {
-                wm.addView(view, view.params)
-            } catch (e: Exception) {
-                e.localizedMessage.loge()
-            }
-
-            isEnabled = true
-            broadcastUpdate()
-            true
-        } else {
-            launchOverlaySettings()
-            broadcastUpdate()
-            false
-        }
+        wakelock.acquire()
+        isEnabled = true
+        broadcastUpdate()
+        return true
+//        return if (Settings.canDrawOverlays(this)) {
+//            try {
+//                wm.removeView(view)
+//            } catch (e: Exception) {}
+//
+//            try {
+//                wm.addView(view, view.params)
+//            } catch (e: Exception) {
+//                e.localizedMessage.loge()
+//            }
+//
+//            isEnabled = true
+//            broadcastUpdate()
+//            true
+//        } else {
+//            launchOverlaySettings()
+//            broadcastUpdate()
+//            false
+//        }
     }
 
     fun disable() {
-        try {
-            wm.removeView(view)
-        } catch (e: Exception) {}
+//        try {
+//            wm.removeView(view)
+//        } catch (e: Exception) {}
 
+        try {
+            wakelock.release()
+        } catch (e: Exception) {}
         isEnabled = false
         currentState = STATE_OFF
         currentTime = TIME_OFF
