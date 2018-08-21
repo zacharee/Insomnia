@@ -59,6 +59,7 @@ class CycleTile : TileService() {
     override fun onCreate() {
         val filter = IntentFilter()
         filter.addAction(ACTION_SET_STATE)
+        filter.addAction(ACTION_TICK)
         filter.addAction(App.ACTION_UPDATE)
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     }
