@@ -121,7 +121,8 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
             setView(view)
 
             setButton(AlertDialog.BUTTON_POSITIVE, context.resources.getText(android.R.string.ok)) { _, _ ->
-                timeSelectedListener?.newTime(textBox.text.toString().toLong() * 1000)
+                val time = textBox.text.toString().toLong()
+                timeSelectedListener?.newTime(if (time < 0) time else time * 1000)
             }
             setButton(AlertDialog.BUTTON_NEGATIVE, context.resources.getText(android.R.string.cancel)) { _, _ ->
                 cancel()

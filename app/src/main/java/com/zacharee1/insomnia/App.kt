@@ -109,6 +109,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         currentState = STATE_OFF
         currentTime = TIME_OFF
 
+        stopCountDown()
         broadcastUpdate()
     }
 
@@ -120,13 +121,12 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     fun setToState(time: Int) {
-        stopCountDown()
-
         setToState(states[time])
     }
 
     fun setToState(state: WakeState?) {
         val newState = state ?: STATE_OFF
+        disable()
         currentTime = getStateIndexByTime(newState.time)
         currentState = newState
 
@@ -148,10 +148,6 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
                 makeCountDown(newState.time)
             }
         }
-    }
-
-    fun setToTime(time: Long) {
-        setToState(getStateIndexByTime(time))
     }
 
     fun getStateIndexByTime(time: Long): Int {
