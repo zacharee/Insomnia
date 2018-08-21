@@ -15,10 +15,11 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
-import android.widget.Switch
 import com.zacharee1.insomnia.R
-import com.zacharee1.insomnia.tiles.CycleTile
-import com.zacharee1.insomnia.util.*
+import com.zacharee1.insomnia.util.TimeAdapter
+import com.zacharee1.insomnia.util.WakeState
+import com.zacharee1.insomnia.util.dpAsPx
+import com.zacharee1.insomnia.util.toBitmap
 import java.util.*
 
 
@@ -84,10 +85,6 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
 
         setUpActionBar()
 
-        val useInfinite = findViewById<Switch>(R.id.use_infinite)
-        useInfinite.isChecked = this@TimesConfigureActivity.useInfinite()
-        useInfinite.setOnCheckedChangeListener { _, isChecked -> setUseInfinite(isChecked) }
-
         val recycler = findViewById<RecyclerView>(R.id.recycler)
 
         recycler.adapter = adapter
@@ -102,7 +99,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
         return true
     }
 
-    override fun onItemRemoved(item: CycleTile.WakeState, position: Int) {
+    override fun onItemRemoved(item: WakeState, position: Int) {
         val format = String.format(Locale.getDefault(), resources.getString(R.string.time_removed_format), (item.time / 1000))
         val snackbar = Snackbar.make(findViewById<ConstraintLayout>(R.id.root), format, Snackbar.LENGTH_LONG)
         snackbar.setAction(R.string.undo) { adapter.addItemAt(item, position) }

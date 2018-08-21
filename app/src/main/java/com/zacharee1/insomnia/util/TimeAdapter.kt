@@ -10,12 +10,13 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
-import com.zacharee1.insomnia.tiles.CycleTile
 import java.util.*
 
 class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : RecyclerView.Adapter<TimeAdapter.Holder>() {
     private val states = ArrayList(context.getSavedTimes())
+    private val app = App.get(context)
 
     override fun getItemCount() = states.size
 
@@ -34,7 +35,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
             }
         }
 
-        holder.setClickListener(View.OnClickListener { CycleTile.setTime(context, states[holder.adapterPosition].time) })
+        holder.setClickListener(View.OnClickListener { app.setToState(states[holder.adapterPosition]) })
         holder.setDragListener(View.OnTouchListener { _, _ -> dragCallback.onStartDrag(holder) })
 
         holder.setTime(state.time)
@@ -61,20 +62,21 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     fun addItem() {
         Dialog(context, object : TimeAdapterListener {
             override fun newTime(time: Long) {
-                states.add(CycleTile.WakeState(R.string.custom, R.drawable.on, time))
+                val title = if (time < 0) R.string.time_infinite else R.string.custom
+                states.add(WakeState(title, R.drawable.on, time))
                 notifyItemInserted(states.lastIndex)
             }
         }).show()
     }
 
-    fun addItemAt(state: CycleTile.WakeState, position: Int) {
+    fun addItemAt(state: WakeState, position: Int) {
         states.add(position, state)
         notifyItemInserted(position)
     }
 
     fun reset() {
         states.clear()
-        states.addAll(CycleTile.DEFAULT_STATES)
+        states.addAll(App.DEFAULT_STATES)
         context.saveTimes(states)
         notifyDataSetChanged()
     }
@@ -94,9 +96,9 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         }
 
         fun setTime(time: Long) {
+            val t: Any = if (time < 0) itemView.context.resources.getString(R.string.time_infinite) else (time / 1000)
             val format = String.format(Locale.getDefault(),
-                    labelView.context.resources.getString(R.string.time_label_format),
-                    (time / 1000))
+                    labelView.context.resources.getString(R.string.time_label_format), t)
             labelView.text = format
         }
 
@@ -132,6 +134,6 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     }
 
     interface ItemRemovedCallback {
-        fun onItemRemoved(item: CycleTile.WakeState, position: Int)
+        fun onItemRemoved(item: WakeState, position: Int)
     }
 }

@@ -10,12 +10,12 @@ import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
 import com.google.gson.Gson
-import com.zacharee1.insomnia.tiles.CycleTile
+import com.zacharee1.insomnia.App
 
 const val TAG = "Insomnia"
 
-const val KEY_USE_INFINITE = "use_infinite"
 const val KEY_STATES = "states"
+const val DELIMITER = "/"
 
 fun String.loge() {
     Log.e(TAG, this)
@@ -41,20 +41,20 @@ fun String.loga() {
     Log.println(Log.ASSERT, TAG, this)
 }
 
-fun Context.getSavedTimes(): ArrayList<CycleTile.WakeState> {
+fun Context.getSavedTimes(): ArrayList<WakeState> {
     val gson = Gson()
-    val strings = PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STATES, null) ?: return CycleTile.DEFAULT_STATES
-    val ret = ArrayList<CycleTile.WakeState>()
+    val strings = PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STATES, null) ?: return App.DEFAULT_STATES
+    val ret = ArrayList<WakeState>()
 
-    strings.split(CycleTile.DELIMITER).forEach {
-        val state = gson.fromJson<CycleTile.WakeState>(it, CycleTile.WakeState::class.java)
+    strings.split(DELIMITER).forEach {
+        val state = gson.fromJson<WakeState>(it, WakeState::class.java)
         if (state != null) ret.add(state)
     }
 
     return ret
 }
 
-fun Context.saveTimes(times: ArrayList<CycleTile.WakeState>) {
+fun Context.saveTimes(times: ArrayList<WakeState>) {
     val gson = Gson()
     val strings = ArrayList<String>()
 
@@ -62,14 +62,7 @@ fun Context.saveTimes(times: ArrayList<CycleTile.WakeState>) {
         strings.add(gson.toJson(it))
     }
 
-    PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STATES, TextUtils.join(CycleTile.DELIMITER, strings)).apply()
-}
-
-fun Context.useInfinite()
-        = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(KEY_USE_INFINITE, true)
-
-fun Context.setUseInfinite(useInfinite: Boolean) {
-    PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(KEY_USE_INFINITE, useInfinite).apply()
+    PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STATES, TextUtils.join(DELIMITER, strings)).apply()
 }
 
 /**

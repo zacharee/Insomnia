@@ -1,19 +1,45 @@
 package com.zacharee1.insomnia
 
 import android.app.Application
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.net.Uri
+import android.os.CountDownTimer
+import android.preference.PreferenceManager
 import android.provider.Settings
+import android.support.v4.content.LocalBroadcastManager
 import android.view.WindowManager
 import android.widget.Toast
+import com.zacharee1.insomnia.tiles.CycleTile
+import com.zacharee1.insomnia.util.KEY_STATES
+import com.zacharee1.insomnia.util.WakeState
+import com.zacharee1.insomnia.util.getSavedTimes
 import com.zacharee1.insomnia.util.loge
 import com.zacharee1.insomnia.views.KeepAwakeView
 
-class App : Application() {
+class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
+        const val ACTION_UPDATE = "com.zacharee1.insomnia.action.UPDATE"
+
+        const val TIME_OFF = 0
+
+        const val ZERO_MIN = 0L
+        const val ONE_MIN = 60 * 1000L
+        const val FIVE_MIN = 300 * 1000L
+        const val TEN_MIN = 600 * 1000L
+        const val THIRTY_MIN = 1800 * 1000L
+        const val INFINITE_MIN = -1L
+
+        val STATE_OFF = WakeState(R.string.app_name, R.drawable.off, ZERO_MIN)
+        val STATE_INFINITE = WakeState(R.string.time_infinite, R.drawable.on, INFINITE_MIN)
+
+        val DEFAULT_STATES = arrayListOf(
+                WakeState(R.string.time_1, R.drawable.on, ONE_MIN),
+                WakeState(R.string.time_5, R.drawable.on, FIVE_MIN),
+                WakeState(R.string.time_10, R.drawable.on, TEN_MIN),
+                WakeState(R.string.time_30, R.drawable.on, THIRTY_MIN),
+                STATE_INFINITE
+        )
+
         fun get(context: Context): App {
             return context.applicationContext as App
         }
@@ -21,8 +47,14 @@ class App : Application() {
 
     val wm by lazy { getSystemService(Context.WINDOW_SERVICE) as WindowManager }
     val view by lazy { KeepAwakeView(this) }
+    val states = ArrayList<WakeState>()
 
     var isEnabled = false
+
+    private var timer: CountDownTimer? = null
+    var currentTime = TIME_OFF
+    var currentState = STATE_OFF
+    var timerRunning = false
 
     private val screenStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -35,7 +67,15 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        populateStates()
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
         registerReceiver(screenStateReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when (key) {
+            KEY_STATES -> populateStates()
+        }
     }
 
     fun enable(): Boolean {
@@ -51,9 +91,11 @@ class App : Application() {
             }
 
             isEnabled = true
+            broadcastUpdate()
             true
         } else {
             launchOverlaySettings()
+            broadcastUpdate()
             false
         }
     }
@@ -64,6 +106,94 @@ class App : Application() {
         } catch (e: Exception) {}
 
         isEnabled = false
+        currentState = STATE_OFF
+        currentTime = TIME_OFF
+
+        broadcastUpdate()
+    }
+
+    fun cycle() {
+        var newIndex = currentTime + 1
+        if (newIndex >= states.size) newIndex = 0
+
+        setToState(newIndex)
+    }
+
+    fun setToState(time: Int) {
+        stopCountDown()
+
+        setToState(states[time])
+    }
+
+    fun setToState(state: WakeState?) {
+        val newState = state ?: STATE_OFF
+        currentTime = getStateIndexByTime(newState.time)
+        currentState = newState
+
+        when (newState.time) {
+            ZERO_MIN -> {
+                disable()
+                timerRunning = false
+            }
+
+            INFINITE_MIN -> {
+                if (enable()) {
+                    timerRunning = true
+                } else {
+                    disable()
+                }
+            }
+
+            else -> {
+                makeCountDown(newState.time)
+            }
+        }
+    }
+
+    fun setToTime(time: Long) {
+        setToState(getStateIndexByTime(time))
+    }
+
+    fun getStateIndexByTime(time: Long): Int {
+        val filtered = states.filter { it.time == time }
+        return states.indexOf(filtered[0])
+    }
+
+    fun broadcastUpdate() {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_UPDATE))
+    }
+
+    private fun populateStates() {
+        disable()
+
+        states.clear()
+        states.add(STATE_OFF)
+
+        states.addAll(getSavedTimes())
+    }
+
+    private fun stopCountDown() {
+        timer?.cancel()
+        timerRunning = false
+    }
+
+    private fun makeCountDown(timeMillis: Long) {
+        if (enable()) {
+            timer = object : CountDownTimer(timeMillis, 1000) {
+                override fun onFinish() {
+                    timerRunning = false
+                    disable()
+                }
+
+                override fun onTick(millisUntilFinished: Long) {
+                    CycleTile.tick(this@App, millisUntilFinished)
+                }
+            }.start()
+
+            timerRunning = true
+        } else {
+            disable()
+        }
     }
 
     private fun launchOverlaySettings() {
