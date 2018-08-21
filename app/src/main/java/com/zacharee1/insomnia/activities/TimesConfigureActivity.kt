@@ -27,9 +27,9 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
     private val adapter by lazy { TimeAdapter(this, this, this) }
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-        override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?)
-                = makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+//        override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?)
+//                = makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+//                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder)
                 = adapter.moveItem(viewHolder.adapterPosition, target.adapterPosition)
