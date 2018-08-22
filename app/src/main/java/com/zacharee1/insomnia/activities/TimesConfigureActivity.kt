@@ -15,11 +15,10 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
+import android.widget.CompoundButton
 import com.zacharee1.insomnia.R
-import com.zacharee1.insomnia.util.TimeAdapter
-import com.zacharee1.insomnia.util.WakeState
-import com.zacharee1.insomnia.util.dpAsPx
-import com.zacharee1.insomnia.util.toBitmap
+import com.zacharee1.insomnia.util.*
+import com.zacharee1.insomnia.views.TextSwitch
 import java.util.*
 
 
@@ -84,6 +83,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
         setContentView(R.layout.activity_time_configure)
 
         setUpActionBar()
+        setUpListeners()
 
         val recycler = findViewById<RecyclerView>(R.id.recycler)
 
@@ -116,5 +116,11 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
         toolbar.addView(reset)
 
         setSupportActionBar(toolbar)
+    }
+
+    private fun setUpListeners() {
+        val plugged = findViewById<TextSwitch>(R.id.turn_on_plugged)
+        plugged.isChecked = activateWhenPlugged()
+        plugged.onCheckedChangeListener = CompoundButton.OnCheckedChangeListener { _, c -> setActivateWhenPlugged(c) }
     }
 }

@@ -88,3 +88,13 @@ fun Drawable.toBitmap(): Bitmap {
 
     return bitmap
 }
+
+fun Context.activateWhenPlugged() =
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("turn_on_plugged", false)
+
+fun Context.setActivateWhenPlugged(activate: Boolean) =
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean("turn_on_plugged", activate)
+                .apply()

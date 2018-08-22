@@ -64,6 +64,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
             override fun newTime(time: Long) {
                 val title = if (time < 0) R.string.time_infinite else R.string.custom
                 states.add(WakeState(title, R.drawable.on, time))
+                context.saveTimes(states)
                 notifyItemInserted(states.lastIndex)
             }
         }).show()
@@ -71,6 +72,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
 
     fun addItemAt(state: WakeState, position: Int) {
         states.add(position, state)
+        context.saveTimes(states)
         notifyItemInserted(position)
     }
 

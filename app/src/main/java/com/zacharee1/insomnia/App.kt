@@ -3,6 +3,7 @@ package com.zacharee1.insomnia
 import android.app.Application
 import android.content.*
 import android.net.Uri
+import android.os.BatteryManager
 import android.os.CountDownTimer
 import android.preference.PreferenceManager
 import android.provider.Settings
@@ -10,10 +11,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.view.WindowManager
 import android.widget.Toast
 import com.zacharee1.insomnia.tiles.CycleTile
-import com.zacharee1.insomnia.util.KEY_STATES
-import com.zacharee1.insomnia.util.WakeState
-import com.zacharee1.insomnia.util.getSavedTimes
-import com.zacharee1.insomnia.util.loge
+import com.zacharee1.insomnia.util.*
 import com.zacharee1.insomnia.views.KeepAwakeView
 
 class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -49,6 +47,30 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     val view by lazy { KeepAwakeView(this) }
     val states = ArrayList<WakeState>()
 
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_BATTERY_CHANGED -> {
+                    if (activateWhenPlugged()) {
+                        val state = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
+                        val plugged = state == BatteryManager.BATTERY_PLUGGED_AC
+                                || state == BatteryManager.BATTERY_PLUGGED_USB
+                                || state == BatteryManager.BATTERY_PLUGGED_WIRELESS
+
+                        if (plugged) setToState(STATE_INFINITE)
+                        else setToState(STATE_OFF)
+                    }
+                }
+
+                Intent.ACTION_SCREEN_OFF -> disable()
+            }
+        }
+    }
+    private val filter = IntentFilter().apply {
+        addAction(Intent.ACTION_BATTERY_CHANGED)
+        addAction(Intent.ACTION_SCREEN_OFF)
+    }
+
     var isEnabled = false
 
     private var timer: CountDownTimer? = null
@@ -56,20 +78,12 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     var currentState = STATE_OFF
     var timerRunning = false
 
-    private val screenStateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> disable()
-            }
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
 
         populateStates()
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
-        registerReceiver(screenStateReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+        registerReceiver(receiver, filter)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -152,7 +166,9 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     fun getStateIndexByTime(time: Long): Int {
         val filtered = states.filter { it.time == time }
-        return states.indexOf(filtered[0])
+        if (states.isEmpty() || filtered.isEmpty()) return 0
+        val index = states.indexOf(filtered[0])
+        return if (index == -1) 0 else index
     }
 
     fun broadcastUpdate() {

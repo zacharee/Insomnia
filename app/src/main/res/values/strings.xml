@@ -15,6 +15,10 @@
     <string name="reset">Reset</string>
     <string name="set_time">Set Time</string>
     <string name="undo">Undo</string>
+    <string name="turn_on_plugged">Activate Infinite Time when Plugged In</string>
+
+    <!-- Descriptions -->
+    <string name="turn_on_plugged_desc">When the device is plugged in, Insomnia will activate Infinite Time. Once unplugged, Insomnia will deactivate.</string>
 
     <!-- Messages -->
     <string name="enable_overlay">Please allow Insomnia to draw over other apps.</string>

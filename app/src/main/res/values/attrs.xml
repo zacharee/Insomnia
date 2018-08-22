@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TextSwitch">
+        <attr name="title_text" format="string|reference" />
+        <attr name="summary_text" format="string|reference" />
+        <attr name="title_text_size" format="dimension|reference" />
+        <attr name="summary_text_size" format="dimension|reference" />
+    </declare-styleable>
+</resources>
