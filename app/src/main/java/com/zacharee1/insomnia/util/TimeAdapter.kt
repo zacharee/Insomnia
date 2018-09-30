@@ -3,6 +3,8 @@ package com.zacharee1.insomnia.util
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import java.util.*
 class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : RecyclerView.Adapter<TimeAdapter.Holder>() {
     private val states = ArrayList(context.getSavedTimes())
     private val app = App.get(context)
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun getItemCount() = states.size
 
@@ -41,46 +44,54 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         holder.setTime(state.time)
     }
 
-    fun moveItem(from: Int, to: Int): Boolean {
-        val state = states.removeAt(from)
+    fun moveItem(from: Int, to: Int) {
+        mainHandler.post {
+            val state = states.removeAt(from)
 
-        states.add(to, state)
-        notifyItemMoved(from, to)
-        context.saveTimes(states)
-
-        return true
+            states.add(to, state)
+            notifyItemMoved(from, to)
+            context.saveTimes(states)
+        }
     }
 
     fun removeItemAt(index: Int) {
-        val item = states.removeAt(index)
-        notifyItemRemoved(index)
-        context.saveTimes(states)
+        mainHandler.post {
+            val item = states.removeAt(index)
+            notifyItemRemoved(index)
+            context.saveTimes(states)
 
-        itemRemovedCallback.onItemRemoved(item, index)
+            itemRemovedCallback.onItemRemoved(item, index)
+        }
     }
 
     fun addItem() {
         Dialog(context, object : TimeAdapterListener {
             override fun newTime(time: Long) {
-                val title = if (time < 0) R.string.time_infinite else R.string.custom
-                states.add(WakeState(title, R.drawable.on, time))
-                context.saveTimes(states)
-                notifyItemInserted(states.lastIndex)
+                mainHandler.post {
+                    val title = if (time < 0) R.string.time_infinite else R.string.custom
+                    states.add(WakeState(title, R.drawable.on, time))
+                    context.saveTimes(states)
+                    notifyItemInserted(states.lastIndex)
+                }
             }
         }).show()
     }
 
     fun addItemAt(state: WakeState, position: Int) {
-        states.add(position, state)
-        context.saveTimes(states)
-        notifyItemInserted(position)
+        mainHandler.post {
+            states.add(position, state)
+            context.saveTimes(states)
+            notifyItemInserted(position)
+        }
     }
 
     fun reset() {
-        states.clear()
-        states.addAll(App.DEFAULT_STATES)
-        context.saveTimes(states)
-        notifyDataSetChanged()
+        mainHandler.post {
+            states.clear()
+            states.addAll(App.DEFAULT_STATES)
+            context.saveTimes(states)
+            notifyDataSetChanged()
+        }
     }
 
     class Holder(view: View) : RecyclerView.ViewHolder(view) {

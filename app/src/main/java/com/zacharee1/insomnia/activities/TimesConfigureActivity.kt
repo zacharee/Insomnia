@@ -30,8 +30,10 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
 //                = makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
 //                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
 
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder)
-                = adapter.moveItem(viewHolder.adapterPosition, target.adapterPosition)
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            adapter.moveItem(viewHolder.adapterPosition, target.adapterPosition)
+            return true
+        }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
                 = adapter.removeItemAt(viewHolder.adapterPosition)
