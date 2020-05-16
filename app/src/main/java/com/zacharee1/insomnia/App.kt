@@ -7,7 +7,7 @@ import android.os.BatteryManager
 import android.os.CountDownTimer
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.view.WindowManager
 import android.widget.Toast
 import com.zacharee1.insomnia.tiles.CycleTile
@@ -172,7 +172,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     fun broadcastUpdate() {
-        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_UPDATE))
+        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_UPDATE))
     }
 
     private fun populateStates() {

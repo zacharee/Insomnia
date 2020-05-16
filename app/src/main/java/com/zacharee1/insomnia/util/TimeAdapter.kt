@@ -5,7 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +16,7 @@ import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
 import java.util.*
 
-class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : RecyclerView.Adapter<TimeAdapter.Holder>() {
+class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : androidx.recyclerview.widget.RecyclerView.Adapter<TimeAdapter.Holder>() {
     private val states = ArrayList(context.getSavedTimes())
     private val app = App.get(context)
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -94,7 +94,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         }
     }
 
-    class Holder(view: View) : RecyclerView.ViewHolder(view) {
+    class Holder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         val labelView = view.findViewById<TextView>(R.id.time_label)
 
         var timeSelectedListener: TimeAdapterListener? = null

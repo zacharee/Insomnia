@@ -8,7 +8,7 @@ import android.graphics.drawable.Icon
 import android.preference.PreferenceManager
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.App.Companion.STATE_OFF
 import com.zacharee1.insomnia.App.Companion.ZERO_MIN
@@ -26,13 +26,13 @@ class CycleTile : TileService() {
         fun setState(context: Context, state: WakeState) {
             val intent = Intent(ACTION_SET_STATE)
             intent.putExtra(EXTRA_STATE, state)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
 
         fun tick(context: Context, time: Long) {
             val intent = Intent(ACTION_TICK)
             intent.putExtra(EXTRA_TIME, time)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
     }
 
@@ -61,11 +61,11 @@ class CycleTile : TileService() {
         filter.addAction(ACTION_SET_STATE)
         filter.addAction(ACTION_TICK)
         filter.addAction(App.ACTION_UPDATE)
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
     override fun onStartListening() {
