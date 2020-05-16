@@ -26,18 +26,17 @@ class CycleTile : TileService() {
         fun setState(context: Context, state: WakeState) {
             val intent = Intent(ACTION_SET_STATE)
             intent.putExtra(EXTRA_STATE, state)
-            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
 
         fun tick(context: Context, time: Long) {
             val intent = Intent(ACTION_TICK)
             intent.putExtra(EXTRA_TIME, time)
-            androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
         }
     }
 
     private val app by lazy { App.get(this) }
-    private val prefs by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
@@ -61,11 +60,11 @@ class CycleTile : TileService() {
         filter.addAction(ACTION_SET_STATE)
         filter.addAction(ACTION_TICK)
         filter.addAction(App.ACTION_UPDATE)
-        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     }
 
     override fun onDestroy() {
-        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
     override fun onStartListening() {
