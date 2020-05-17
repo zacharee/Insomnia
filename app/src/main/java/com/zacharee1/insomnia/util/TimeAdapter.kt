@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
 import java.util.*
@@ -123,20 +124,24 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         }
     }
 
-    class Dialog(context: Context, private val timeSelectedListener: TimeAdapterListener?) : AlertDialog(context) {
+    class Dialog(context: Context, private val timeSelectedListener: TimeAdapterListener?) : MaterialAlertDialogBuilder(context) {
         private val view = View.inflate(context, R.layout.time_edit_dialog, null)
         private val textBox = view.findViewById<EditText>(R.id.time_edit)
 
         init {
             setTitle(context.resources.getString(R.string.time))
             setView(view)
+        }
 
-            setButton(AlertDialog.BUTTON_POSITIVE, context.resources.getText(android.R.string.ok)) { _, _ ->
-                val time = textBox.text.toString().toLong()
-                timeSelectedListener?.newTime(if (time < 0) time else time * 1000)
-            }
-            setButton(AlertDialog.BUTTON_NEGATIVE, context.resources.getText(android.R.string.cancel)) { _, _ ->
-                cancel()
+        override fun create(): androidx.appcompat.app.AlertDialog {
+            return super.create().apply {
+                setButton(AlertDialog.BUTTON_POSITIVE, context.resources.getText(android.R.string.ok)) { _, _ ->
+                    val time = textBox.text.toString().toLong()
+                    timeSelectedListener?.newTime(if (time < 0) time else time * 1000)
+                }
+                setButton(AlertDialog.BUTTON_NEGATIVE, context.resources.getText(android.R.string.cancel)) { _, _ ->
+                    cancel()
+                }
             }
         }
     }
