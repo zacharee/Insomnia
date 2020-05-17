@@ -47,7 +47,7 @@ fun Context.getSavedTimes(): ArrayList<WakeState> {
     val ret = ArrayList<WakeState>()
 
     strings.split(DELIMITER).forEach {
-        val state = gson.fromJson<WakeState>(it, WakeState::class.java)
+        val state = gson.fromJson(it, WakeState::class.java)
         if (state != null) ret.add(state)
     }
 

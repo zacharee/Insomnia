@@ -4,15 +4,14 @@ import android.app.Application
 import android.content.*
 import android.net.Uri
 import android.os.BatteryManager
-import android.os.CountDownTimer
 import android.preference.PreferenceManager
 import android.provider.Settings
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.view.WindowManager
 import android.widget.Toast
 import com.zacharee1.insomnia.tiles.CycleTile
 import com.zacharee1.insomnia.util.*
 import com.zacharee1.insomnia.views.KeepAwakeView
+import tk.zwander.unblacklister.disableApiBlacklist
 
 class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
@@ -27,14 +26,14 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         const val THIRTY_MIN = 1800 * 1000L
         const val INFINITE_MIN = -1L
 
-        val STATE_OFF = WakeState(R.string.app_name, R.drawable.off, ZERO_MIN)
-        val STATE_INFINITE = WakeState(R.string.time_infinite, R.drawable.on, INFINITE_MIN)
+        val STATE_OFF by lazy { WakeState(ZERO_MIN) }
+        val STATE_INFINITE = WakeState(INFINITE_MIN)
 
         val DEFAULT_STATES = arrayListOf(
-                WakeState(R.string.time_1, R.drawable.on, ONE_MIN),
-                WakeState(R.string.time_5, R.drawable.on, FIVE_MIN),
-                WakeState(R.string.time_10, R.drawable.on, TEN_MIN),
-                WakeState(R.string.time_30, R.drawable.on, THIRTY_MIN),
+                WakeState(ONE_MIN),
+                WakeState(FIVE_MIN),
+                WakeState(TEN_MIN),
+                WakeState(THIRTY_MIN),
                 STATE_INFINITE
         )
 
@@ -73,13 +72,15 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     var isEnabled = false
 
-    private var timer: CountDownTimer? = null
+    private var timer: CycleTimer? = null
     var currentTime = TIME_OFF
     var currentState = STATE_OFF
     var timerRunning = false
 
     override fun onCreate() {
         super.onCreate()
+
+        disableApiBlacklist()
 
         populateStates()
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
@@ -128,10 +129,14 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     fun cycle() {
-        var newIndex = currentTime + 1
-        if (newIndex >= states.size) newIndex = 0
+        if (timerRunning && timer?.elapsedTime ?: 0 > 10000L) {
+            setToState(STATE_OFF)
+        } else {
+            var newIndex = currentTime + 1
+            if (newIndex >= states.size) newIndex = 0
 
-        setToState(newIndex)
+            setToState(newIndex)
+        }
     }
 
     fun setToState(time: Int) {
@@ -191,7 +196,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private fun makeCountDown(timeMillis: Long) {
         if (enable()) {
-            timer = object : CountDownTimer(timeMillis, 1000) {
+            timer = object : CycleTimer(timeMillis, 1000) {
                 override fun onFinish() {
                     timerRunning = false
                     disable()
@@ -200,7 +205,8 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
                 override fun onTick(millisUntilFinished: Long) {
                     CycleTile.tick(this@App, millisUntilFinished)
                 }
-            }.start()
+            }
+            timer?.start()
 
             timerRunning = true
         } else {

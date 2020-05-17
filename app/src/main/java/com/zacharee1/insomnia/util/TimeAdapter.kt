@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,8 +67,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         Dialog(context, object : TimeAdapterListener {
             override fun newTime(time: Long) {
                 mainHandler.post {
-                    val title = if (time < 0) R.string.time_infinite else R.string.custom
-                    states.add(WakeState(title, R.drawable.on, time))
+                    states.add(WakeState(time))
                     context.saveTimes(states)
                     notifyItemInserted(states.lastIndex)
                 }

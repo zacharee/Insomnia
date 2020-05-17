@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.Icon
-import android.preference.PreferenceManager
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -79,9 +78,9 @@ class CycleTile : TileService() {
 
     private fun setToState(state: WakeState) {
         updateTileWithNewInfo(
-                resources.getText(state.label),
-                Icon.createWithResource(this, state.icon),
-                if (state.time == App.ZERO_MIN) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+                state.createLabelFromTime(this),
+                Icon.createWithResource(this, state.drawableResourceFromTime()),
+                if (state.time == ZERO_MIN) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
         )
     }
 
@@ -94,8 +93,8 @@ class CycleTile : TileService() {
 
     private fun setOffState() {
         updateTileWithNewInfo(
-                resources.getText(STATE_OFF.label),
-                Icon.createWithResource(this, STATE_OFF.icon),
+                STATE_OFF.createLabelFromTime(this),
+                Icon.createWithResource(this, STATE_OFF.drawableResourceFromTime()),
                 Tile.STATE_INACTIVE
         )
     }

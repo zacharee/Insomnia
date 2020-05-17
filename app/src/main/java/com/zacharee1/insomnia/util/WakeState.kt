@@ -1,13 +1,16 @@
 package com.zacharee1.insomnia.util
 
+import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.os.Parcel
 import android.os.Parcelable
+import com.zacharee1.insomnia.R
+import java.util.*
 
-class WakeState(val label: Int, val icon: Int, var time: Long) : Parcelable {
+class WakeState(var time: Long) : Parcelable {
     constructor(parcel: Parcel) : this(
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readLong())
+        parcel.readLong()
+    )
 
     override fun equals(other: Any?): Boolean {
         return (other is WakeState && other.time == time)
@@ -18,13 +21,24 @@ class WakeState(val label: Int, val icon: Int, var time: Long) : Parcelable {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(label)
-        parcel.writeInt(icon)
         parcel.writeLong(time)
     }
 
     override fun describeContents(): Int {
         return time.hashCode()
+    }
+
+    fun createLabelFromTime(context: Context): String {
+        val format = SimpleDateFormat("mm:ss", Locale.getDefault())
+        return when {
+            time < 0 -> context.resources.getString(R.string.time_infinite)
+            time == 0L -> context.resources.getString(R.string.app_name)
+            else -> format.format(Date(time))
+        }
+    }
+
+    fun drawableResourceFromTime(): Int {
+        return if (time == 0L) R.drawable.off else R.drawable.on
     }
 
     companion object CREATOR : Parcelable.Creator<WakeState> {
