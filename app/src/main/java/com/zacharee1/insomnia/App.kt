@@ -4,19 +4,17 @@ import android.app.Application
 import android.content.*
 import android.net.Uri
 import android.os.BatteryManager
-import android.preference.PreferenceManager
+import android.os.Build
 import android.provider.Settings
 import android.view.WindowManager
 import android.widget.Toast
-import com.zacharee1.insomnia.tiles.CycleTile
+import androidx.preference.PreferenceManager
 import com.zacharee1.insomnia.util.*
 import com.zacharee1.insomnia.views.KeepAwakeView
-import tk.zwander.unblacklister.disableApiBlacklist
+import org.lsposed.hiddenapibypass.HiddenApiBypass
 
-class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
+class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, EventListener {
     companion object {
-        const val ACTION_UPDATE = "com.zacharee1.insomnia.action.UPDATE"
-
         const val TIME_OFF = 0
 
         const val ZERO_MIN = 0L
@@ -42,9 +40,9 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    val wm by lazy { getSystemService(Context.WINDOW_SERVICE) as WindowManager }
-    val view by lazy { KeepAwakeView(this) }
-    val states = ArrayList<WakeState>()
+    private val wm by lazy { getSystemService(Context.WINDOW_SERVICE) as WindowManager }
+    private val view by lazy { KeepAwakeView(this) }
+    private val states = ArrayList<WakeState>()
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -70,17 +68,21 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         addAction(Intent.ACTION_SCREEN_OFF)
     }
 
-    var isEnabled = false
+    private var isEnabled = false
 
     private var timer: CycleTimer? = null
-    var currentTime = TIME_OFF
-    var currentState = STATE_OFF
+    private var currentTime = TIME_OFF
+    private var currentState = STATE_OFF
     var timerRunning = false
 
     override fun onCreate() {
         super.onCreate()
 
-        disableApiBlacklist()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            HiddenApiBypass.setHiddenApiExemptions("")
+        }
+
+        eventManager.addListener(this)
 
         populateStates()
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
@@ -93,24 +95,24 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    fun enable(): Boolean {
+    private fun enable(): Boolean {
         return if (Settings.canDrawOverlays(this)) {
             try {
                 wm.removeView(view)
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
 
             try {
                 wm.addView(view, view.params)
             } catch (e: Exception) {
-                e.localizedMessage.loge()
+                e.localizedMessage?.loge()
             }
 
             isEnabled = true
-            broadcastUpdate()
+            sendUpdate()
             true
         } else {
             launchOverlaySettings()
-            broadcastUpdate()
+            sendUpdate()
             false
         }
     }
@@ -118,18 +120,18 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
     fun disable() {
         try {
             wm.removeView(view)
-        } catch (e: Exception) {}
+        } catch (_: Exception) {}
 
         isEnabled = false
         currentState = STATE_OFF
         currentTime = TIME_OFF
 
         stopCountDown()
-        broadcastUpdate()
+        sendUpdate()
     }
 
-    fun cycle() {
-        if (timerRunning && timer?.elapsedTime ?: 0 > 10000L) {
+    private fun cycle() {
+        if (timerRunning && (timer?.elapsedTime ?: 0) > 10000L) {
             setToState(STATE_OFF)
         } else {
             var newIndex = currentTime + 1
@@ -139,7 +141,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    fun setToState(time: Int) {
+    private fun setToState(time: Int) {
         setToState(states[time])
     }
 
@@ -169,15 +171,23 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    fun getStateIndexByTime(time: Long): Int {
+    override fun onEvent(event: Event) {
+        when (event) {
+            Event.Cycle -> cycle()
+            Event.RequestUpdate -> sendUpdate()
+            else -> {}
+        }
+    }
+
+    private fun getStateIndexByTime(time: Long): Int {
         val filtered = states.filter { it.time == time }
         if (states.isEmpty() || filtered.isEmpty()) return 0
         val index = states.indexOf(filtered[0])
         return if (index == -1) 0 else index
     }
 
-    fun broadcastUpdate() {
-        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(ACTION_UPDATE))
+    private fun sendUpdate() {
+        eventManager.sendEvent(Event.NewState(currentState))
     }
 
     private fun populateStates() {
@@ -203,7 +213,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
                 }
 
                 override fun onTick(millisUntilFinished: Long) {
-                    CycleTile.tick(this@App, millisUntilFinished)
+                    eventManager.sendEvent(Event.Tick(millisUntilFinished))
                 }
             }
             timer?.start()
