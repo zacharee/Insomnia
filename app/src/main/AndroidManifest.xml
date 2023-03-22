@@ -28,13 +28,19 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
+        </activity>
 
+        <activity-alias
+            android:name=".LauncherActivity"
+            android:targetActivity=".activities.TimesConfigureActivity"
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
 
