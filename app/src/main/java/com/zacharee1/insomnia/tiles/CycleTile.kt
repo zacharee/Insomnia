@@ -4,6 +4,7 @@ import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.zacharee1.insomnia.App.Companion.ZERO_MIN
+import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.util.Event
 import com.zacharee1.insomnia.util.EventListener
 import com.zacharee1.insomnia.util.WakeState
@@ -51,12 +52,14 @@ class CycleTile : TileService(), EventListener {
     }
 
     private fun onTick(millisUntilFinished: Long) {
-        qsTile?.label = String.format("%d:%02d",
+        updateTileWithNewInfo(
+            label = String.format("%d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                 TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                         TimeUnit.MINUTES.toSeconds(
-                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))),
+            state = if (millisUntilFinished > 0) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE,
+            icon = Icon.createWithResource(this, if (millisUntilFinished > 0) R.drawable.on else R.drawable.off)
         )
-        qsTile?.updateTile()
     }
 }

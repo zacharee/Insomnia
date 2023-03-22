@@ -177,7 +177,15 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
     override fun onEvent(event: Event) {
         when (event) {
             Event.Cycle -> cycle()
-            Event.RequestUpdate -> sendUpdate()
+            Event.RequestUpdate -> {
+                val timer = timer
+
+                if (timer != null && timerRunning) {
+                    eventManager.sendEvent(Event.Tick(timer.remainingTime))
+                } else {
+                    sendUpdate()
+                }
+            }
             else -> {}
         }
     }
