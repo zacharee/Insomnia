@@ -1,10 +1,12 @@
 package com.zacharee1.insomnia.util
 
+import android.annotation.SuppressLint
 import android.os.CountDownTimer
 import android.os.SystemClock
 
 abstract class CycleTimer(private val millisInFuture: Long, countDownInterval: Long) : CountDownTimer(millisInFuture, countDownInterval) {
     val stopTimeInFuture: Long
+        @SuppressLint("SoonBlockedPrivateApi")
         get() = CountDownTimer::class.java
                 .getDeclaredField("mStopTimeInFuture")
                 .apply { isAccessible = true }

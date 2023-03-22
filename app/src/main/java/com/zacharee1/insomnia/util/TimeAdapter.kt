@@ -27,6 +27,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         return Holder(LayoutInflater.from(parent.context).inflate(R.layout.time_configure_item, parent, false))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val state = states[position]
 
@@ -38,8 +39,8 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
             }
         }
 
-        holder.setClickListener(View.OnClickListener { app.setToState(states[holder.adapterPosition]) })
-        holder.setDragListener(View.OnTouchListener { _, _ -> dragCallback.onStartDrag(holder) })
+        holder.setClickListener { app.setToState(states[holder.bindingAdapterPosition]) }
+        holder.setDragListener { _, _ -> dragCallback.onStartDrag(holder) }
 
         holder.setTime(state.time)
     }
@@ -84,6 +85,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun reset() {
         mainHandler.post {
             states.clear()
@@ -94,7 +96,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     }
 
     class Holder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-        val labelView = view.findViewById<TextView>(R.id.time_label)
+        private val labelView: TextView = view.findViewById<TextView>(R.id.time_label)
 
         var timeSelectedListener: TimeAdapterListener? = null
 

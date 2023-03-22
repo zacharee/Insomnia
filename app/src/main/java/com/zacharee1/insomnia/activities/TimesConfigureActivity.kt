@@ -20,25 +20,22 @@ import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.util.*
 import com.zacharee1.insomnia.views.TextSwitch
 import java.util.*
+import kotlin.math.abs
 
 
 class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, TimeAdapter.ItemRemovedCallback {
     private val adapter by lazy { TimeAdapter(this, this, this) }
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-//        override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?)
-//                = makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-//                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-
-        override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
-            adapter.moveItem(viewHolder.adapterPosition, target.adapterPosition)
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            adapter.moveItem(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
             return true
         }
 
-        override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int)
-                = adapter.removeItemAt(viewHolder.adapterPosition)
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
+                = adapter.removeItemAt(viewHolder.bindingAdapterPosition)
 
-        override fun onChildDraw(c: Canvas, recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+        override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
             if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                 // Get RecyclerView item from the ViewHolder
                 val itemView = viewHolder.itemView
@@ -70,7 +67,7 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
                             p)
                 }
 
-                val alpha = 1.0f - Math.abs(dX) / viewHolder.itemView.width.toFloat()
+                val alpha = 1.0f - abs(dX) / viewHolder.itemView.width.toFloat()
                 viewHolder.itemView.alpha = alpha
                 viewHolder.itemView.translationX = dX
 
@@ -87,11 +84,11 @@ class TimesConfigureActivity : AppCompatActivity(), TimeAdapter.DragCallback, Ti
         setUpActionBar()
         setUpListeners()
 
-        val recycler = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recycler)
+        val recycler = findViewById<RecyclerView>(R.id.recycler)
 
         recycler.adapter = adapter
-        recycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
-        recycler.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL))
+        recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recycler.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         helper.attachToRecyclerView(recycler)
     }

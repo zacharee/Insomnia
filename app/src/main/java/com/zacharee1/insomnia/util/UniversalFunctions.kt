@@ -5,12 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.zacharee1.insomnia.App
+import kotlin.math.roundToInt
 
 const val TAG = "Insomnia"
 
@@ -74,7 +75,8 @@ fun Context.dpAsPx(dpVal: Int) =
         dpAsPx(dpVal.toFloat())
 
 fun Context.dpAsPx(dpVal: Float) =
-        Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, resources.displayMetrics))
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal, resources.displayMetrics)
+        .roundToInt()
 
 fun Drawable.toBitmap(): Bitmap {
     if (this is BitmapDrawable) {
