@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
@@ -95,8 +96,8 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         }
     }
 
-    class Holder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-        private val labelView: TextView = view.findViewById<TextView>(R.id.time_label)
+    class Holder(view: View) : RecyclerView.ViewHolder(view) {
+        private val labelView: TextView = view.findViewById(R.id.time_label)
 
         var timeSelectedListener: TimeAdapterListener? = null
 

@@ -12,7 +12,8 @@ class KeepAwakeView(context: Context) : View(context) {
         init {
             height = 1
             width = 1
-            y = 0
+            y = -1
+            x = -1
             gravity = Gravity.LEFT or Gravity.BOTTOM
             type = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) TYPE_APPLICATION_OVERLAY
                     else TYPE_PRIORITY_PHONE

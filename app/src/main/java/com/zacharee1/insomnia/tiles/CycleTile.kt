@@ -1,15 +1,8 @@
 package com.zacharee1.insomnia.tiles
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.zacharee1.insomnia.App
-import com.zacharee1.insomnia.App.Companion.STATE_OFF
 import com.zacharee1.insomnia.App.Companion.ZERO_MIN
 import com.zacharee1.insomnia.util.Event
 import com.zacharee1.insomnia.util.EventListener
