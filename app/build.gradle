@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: "com.bugsnag.android.gradle"
 
 android {
     compileSdk 33
@@ -47,8 +46,8 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.android.material:material:1.8.0'
-    implementation 'com.google.firebase:firebase-analytics:21.2.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.5'
 
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
+
+    implementation "com.bugsnag:bugsnag-android:5.28.4"
 }

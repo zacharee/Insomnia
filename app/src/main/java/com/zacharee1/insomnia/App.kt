@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.bugsnag.android.Bugsnag
 import com.zacharee1.insomnia.util.*
 import com.zacharee1.insomnia.views.KeepAwakeView
 import org.lsposed.hiddenapibypass.HiddenApiBypass
@@ -77,6 +78,8 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
 
     override fun onCreate() {
         super.onCreate()
+
+        Bugsnag.start(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             HiddenApiBypass.setHiddenApiExemptions("")
