@@ -8,12 +8,12 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
+import com.zacharee1.insomnia.databinding.TimeEditDialogBinding
 import java.util.*
 
 class TimeAdapter(private val context: Context, private val dragCallback: DragCallback, private val itemRemovedCallback: ItemRemovedCallback) : androidx.recyclerview.widget.RecyclerView.Adapter<TimeAdapter.Holder>() {
@@ -127,8 +127,9 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
     }
 
     class Dialog(context: Context, private val timeSelectedListener: TimeAdapterListener?) : MaterialAlertDialogBuilder(context) {
-        private val view = View.inflate(context, R.layout.time_edit_dialog, null)
-        private val textBox = view.findViewById<EditText>(R.id.time_edit)
+        private val binding = TimeEditDialogBinding.inflate(LayoutInflater.from(context))
+        private val view = binding.root
+        private val textBox = binding.timeEditBox
 
         init {
             setTitle(context.resources.getString(R.string.time))
