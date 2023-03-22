@@ -57,14 +57,6 @@ class CycleTile : TileService(), EventListener {
         qsTile?.updateTile()
     }
 
-    private fun setOffState() {
-        updateTileWithNewInfo(
-                STATE_OFF.createLabelFromTime(this),
-                Icon.createWithResource(this, STATE_OFF.drawableResourceFromTime()),
-                Tile.STATE_INACTIVE
-        )
-    }
-
     private fun onTick(millisUntilFinished: Long) {
         qsTile?.label = String.format("%d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
