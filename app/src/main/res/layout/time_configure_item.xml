@@ -19,7 +19,6 @@
         android:focusable="true"
         android:scaleType="center"
         android:src="@drawable/drag"
-        android:tint="#fff"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +30,6 @@
     <TextView
         android:id="@+id/time_label"
         android:textSize="24sp"
-        android:textColor="#fff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="@string/time_label_format"
@@ -50,7 +48,6 @@
         android:focusable="true"
         android:scaleType="center"
         android:src="@drawable/edit"
-        android:tint="#fff"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

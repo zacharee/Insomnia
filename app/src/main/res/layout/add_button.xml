@@ -10,5 +10,4 @@
     android:contentDescription="@string/add_time"
     android:background="?android:selectableItemBackgroundBorderless"
     android:src="@drawable/add"
-    android:tint="#fff"
     />

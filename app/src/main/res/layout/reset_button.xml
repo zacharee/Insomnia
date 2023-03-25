@@ -11,5 +11,4 @@
     android:background="?android:selectableItemBackgroundBorderless"
     android:src="@drawable/refresh"
     android:scaleX="-1"
-    android:tint="#fff"
     />
