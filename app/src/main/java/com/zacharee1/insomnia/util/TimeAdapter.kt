@@ -140,7 +140,7 @@ class TimeAdapter(private val context: Context, private val dragCallback: DragCa
         override fun create(): androidx.appcompat.app.AlertDialog {
             return super.create().apply {
                 setButton(AlertDialog.BUTTON_POSITIVE, context.resources.getText(android.R.string.ok)) { _, _ ->
-                    val time = textBox.text.toString().toLong()
+                    val time = textBox.text.toString().toLongOrNull() ?: return@setButton
                     timeSelectedListener?.newTime(if (time < 0) time else time * 1000)
                 }
                 setButton(AlertDialog.BUTTON_NEGATIVE, context.resources.getText(android.R.string.cancel)) { _, _ ->
