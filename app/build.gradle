@@ -10,8 +10,8 @@ android {
         applicationId "com.zacharee1.insomnia"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 8
-        versionName "1.6"
+        versionCode 9
+        versionName "1.7"
         namespace "com.zacharee1.insomnia"
     }
     buildTypes {
