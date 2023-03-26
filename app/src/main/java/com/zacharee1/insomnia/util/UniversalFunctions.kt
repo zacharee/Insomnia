@@ -55,7 +55,7 @@ fun Context.getSavedTimes(): ArrayList<WakeState> {
     return ret
 }
 
-fun Context.saveTimes(times: ArrayList<WakeState>) {
+fun Context.saveTimes(times: List<WakeState>) {
     val gson = Gson()
     val strings = ArrayList<String>()
 

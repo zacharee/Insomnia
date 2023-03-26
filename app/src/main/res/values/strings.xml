@@ -16,18 +16,22 @@
     <string name="set_time">Set Time</string>
     <string name="undo">Undo</string>
     <string name="turn_on_plugged">Activate Infinite Time when Plugged In</string>
+    <string name="back">Back</string>
+    <string name="remove">Remove</string>
+    <string name="reorder">Reorder</string>
+    <string name="edit_time">Edit Time</string>
 
     <!-- Descriptions -->
     <string name="turn_on_plugged_desc">When the device is plugged in, Insomnia will activate Infinite Time. Once unplugged, Insomnia will deactivate.</string>
 
     <!-- Messages -->
     <string name="enable_overlay">Please allow Insomnia to draw over other apps.</string>
-    <string name="config_hint">Use the plus button above to add a time. Use the drag handles to re-order the times. Use the pencil buttons to edit a time. Use -1 for infinite time.</string>
+    <string name="config_hint">Use the plus button to add a time. Use the drag handles to re-order the times. Enter -1 for infinite time.</string>
 
     <!-- Hints -->
     <string name="time_ms">Time (Seconds)</string>
 
     <!-- Other -->
     <string name="time_label_format">%s Seconds</string>
-    <string name="time_removed_format">\"%s Seconds\" Removed</string>
+    <string name="time_removed_format">\"%s\" Removed</string>
 </resources>

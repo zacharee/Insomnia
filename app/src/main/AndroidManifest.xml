@@ -24,6 +24,7 @@
         <activity
             android:name=".activities.TimesConfigureActivity"
             android:label="@string/configure"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
