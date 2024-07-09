@@ -8,3 +8,17 @@
 /build
 /captures
 .externalNativeBuild
+/.idea/deploymentTargetSelector.xml
+/.idea/caches/deviceStreaming.xml
+/app/release/app-release.apk
+/.idea/assetWizardSettings.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/compiler.xml
+/.idea/appInsightsSettings.xml
+/.idea/gradle.xml
+/.idea/jarRepositories.xml
+/.idea/kotlinc.xml
+/.idea/migrations.xml
+/.idea/misc.xml
+/app/release/output-metadata.json
+/.idea/vcs.xml
