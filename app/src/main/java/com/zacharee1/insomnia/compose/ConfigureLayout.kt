@@ -198,7 +198,7 @@ fun ConfigureLayout() {
                                             contentDescription = stringResource(id = R.string.reorder),
                                             modifier = Modifier.dragContainerForDragHandle(
                                                 dragDropState = dragState,
-                                                key = time.time
+                                                key = time.time,
                                             ),
                                         )
 
@@ -206,15 +206,15 @@ fun ConfigureLayout() {
                                             text = time.createLabelFromTime(context),
                                             modifier = Modifier.weight(1f),
                                             textAlign = TextAlign.Center,
-                                            style = MaterialTheme.typography.titleLarge
+                                            style = MaterialTheme.typography.titleLarge,
                                         )
 
                                         IconButton(
-                                            onClick = { timeToEdit = time.time }
+                                            onClick = { timeToEdit = time.time },
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.edit),
-                                                contentDescription = stringResource(id = R.string.edit_time)
+                                                contentDescription = stringResource(id = R.string.edit_time),
                                             )
                                         }
                                     }
@@ -300,8 +300,8 @@ fun ConfigureLayout() {
                         Text(
                             text = stringResource(
                                 id = R.string.time_removed_format,
-                                rTime?.first?.createLabelFromTime(context) ?: ""
-                            )
+                                rTime?.first?.createLabelFromTime(context) ?: "",
+                            ),
                         )
                     }
                 }
