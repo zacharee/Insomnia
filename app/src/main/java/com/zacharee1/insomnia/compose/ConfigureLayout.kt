@@ -88,7 +88,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
         mutableStateOf(false)
     }
     var removedTime by remember {
-        mutableStateOf<WakeState?>(null)
+        mutableStateOf<Pair<WakeState, Int>?>(null)
     }
 
     LaunchedEffect(key1 = removedTime) {
@@ -145,17 +145,17 @@ fun ConfigureLayout(title: String = "TestTitle") {
                     itemsIndexed(times, { _, time -> time.time }) { index, time ->
                         val state = rememberSwipeToDismissBoxState(
                             positionalThreshold = { it / 3f },
-                            confirmValueChange = { true },
+                            confirmValueChange = {
+                                if (it != SwipeToDismissBoxValue.Settled) {
+                                    val timeIndex = times.indexOf(time)
+                                    times = times - time
+
+                                    removedTime = time to timeIndex
+                                }
+
+                                true
+                            },
                         )
-
-                        LaunchedEffect(key1 = state.currentValue, key2 = state.targetValue) {
-                            if (state.currentValue != SwipeToDismissBoxValue.Settled &&
-                                state.targetValue != SwipeToDismissBoxValue.Settled) {
-                                times = times - time
-
-                                removedTime = time
-                            }
-                        }
 
                         DraggableItem(dragDropState = dragState, index = index) { dragging ->
                             val elevation by animateDpAsState(targetValue = if (dragging) 8.dp else 0.dp, label = "${time.time}")
@@ -229,7 +229,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
 
                 AddTimeLayout(
                     onResetClicked = {
-                         times = App.DEFAULT_STATES
+                         times = ArrayList(App.DEFAULT_STATES)
                     },
                     onTimeAdded = { newTime ->
                         if (!times.contains(WakeState(newTime))) {
@@ -266,7 +266,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
                 )
 
                 AnimatedVisibility(visible = removedTime != null) {
-                    val rTime = remember {
+                    val rTime = remember(times) {
                         removedTime
                     }
 
@@ -275,7 +275,9 @@ fun ConfigureLayout(title: String = "TestTitle") {
                             TextButton(
                                 onClick = {
                                     if (rTime != null) {
-                                        times = times + rTime
+                                        times = ArrayList(times).apply {
+                                            add(rTime.second, rTime.first)
+                                        }
                                         removedTime = null
                                     }
                                 }
@@ -295,7 +297,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.surfaceVariant),
                     ) {
-                        Text(text = stringResource(id = R.string.time_removed_format, rTime?.createLabelFromTime(context) ?: ""))
+                        Text(text = stringResource(id = R.string.time_removed_format, rTime?.first?.createLabelFromTime(context) ?: ""))
                     }
                 }
             }
