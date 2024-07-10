@@ -7,15 +7,15 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.zacharee1.insomnia"
+        namespace "com.zacharee1.insomnia"
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 9
         versionName "1.7"
-        namespace "com.zacharee1.insomnia"
     }
     buildTypes {
         release {
@@ -29,9 +29,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

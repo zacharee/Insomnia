@@ -18,18 +18,17 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.DismissState
-import androidx.compose.material3.DismissValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,7 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ConfigureLayout(title: String = "TestTitle") {
     val context = LocalContext.current
@@ -99,6 +98,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
         removedTime = null
     }
 
+    @Suppress("DEPRECATION")
     Mdc3Theme {
         Surface(
             modifier = Modifier
@@ -143,19 +143,14 @@ fun ConfigureLayout(title: String = "TestTitle") {
                     state = listState,
                 ) {
                     itemsIndexed(times, { _, time -> time.time }) { index, time ->
-                        val state = remember {
-                            DismissState(
-                                initialValue = DismissValue.Default,
-                                confirmValueChange = { true },
-                                positionalThreshold = {
-                                    it / 3f
-                                }
-                            )
-                        }
+                        val state = rememberSwipeToDismissBoxState(
+                            positionalThreshold = { it / 3f },
+                            confirmValueChange = { true },
+                        )
 
                         LaunchedEffect(key1 = state.currentValue, key2 = state.targetValue) {
-                            if (state.currentValue != DismissValue.Default &&
-                                state.targetValue != DismissValue.Default) {
+                            if (state.currentValue != SwipeToDismissBoxValue.Settled &&
+                                state.targetValue != SwipeToDismissBoxValue.Settled) {
                                 times = times - time
 
                                 removedTime = time
@@ -164,10 +159,10 @@ fun ConfigureLayout(title: String = "TestTitle") {
 
                         DraggableItem(dragDropState = dragState, index = index) { dragging ->
                             val elevation by animateDpAsState(targetValue = if (dragging) 8.dp else 0.dp, label = "${time.time}")
-                            
-                            SwipeToDismiss(
+
+                            SwipeToDismissBox(
                                 state = state,
-                                background = {
+                                backgroundContent = {
                                     Row(
                                         modifier = Modifier
                                             .background(MaterialTheme.colorScheme.errorContainer)
@@ -190,7 +185,7 @@ fun ConfigureLayout(title: String = "TestTitle") {
                                         )
                                     }
                                 },
-                                dismissContent = {
+                                content = {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -269,10 +264,6 @@ fun ConfigureLayout(title: String = "TestTitle") {
                     },
                     prefill = timeToEdit,
                 )
-
-                removedTime?.let { rTime ->
-
-                }
 
                 AnimatedVisibility(visible = removedTime != null) {
                     val rTime = remember {
