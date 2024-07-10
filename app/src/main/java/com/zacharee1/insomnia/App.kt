@@ -102,12 +102,14 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
         return if (Settings.canDrawOverlays(this)) {
             try {
                 wm.removeView(view)
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                e.message?.loge()
+            }
 
             try {
                 wm.addView(view, view.params)
             } catch (e: Exception) {
-                e.localizedMessage?.loge()
+                e.message?.loge()
             }
 
             isEnabled = true
@@ -123,7 +125,9 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
     fun disable() {
         try {
             wm.removeView(view)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            e.message?.loge()
+        }
 
         isEnabled = false
         currentState = STATE_OFF
