@@ -1,5 +1,6 @@
 package com.zacharee1.insomnia.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
@@ -8,7 +9,9 @@ import android.view.View
 import android.view.WindowManager
 
 class KeepAwakeView(context: Context) : View(context) {
-    val params = object : WindowManager.LayoutParams() {
+    @Suppress("DEPRECATION")
+    val params = @SuppressLint("RtlHardcoded")
+    object : WindowManager.LayoutParams() {
         init {
             height = 1
             width = 1
