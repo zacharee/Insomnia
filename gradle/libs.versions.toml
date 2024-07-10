@@ -1,0 +1,38 @@
+[versions]
+accompanistThemeadapterMaterial3 = "0.34.0"
+activityCompose = "1.9.0"
+androidGradlePlugin = "8.4.2"
+appcompat = "1.7.0"
+bugsnagAndroid = "6.6.1"
+bugsnagAndroidGradlePlugin = "8.1.0"
+bugsnagAndroidPerformance = "1.4.0"
+composeBom = "2024.06.00-alpha01"
+constraintlayout = "2.1.4"
+gson = "2.11.0"
+hiddenapibypass = "4.3"
+kotlin = "2.0.0"
+material = "1.12.0"
+preferenceKtx = "1.2.1"
+
+[libraries]
+accompanist-themeadapter-material3 = { module = "com.google.accompanist:accompanist-themeadapter-material3", version.ref = "accompanistThemeadapterMaterial3" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+bugsnag-android = { module = "com.bugsnag:bugsnag-android", version.ref = "bugsnagAndroid" }
+bugsnag-android-performance = { module = "com.bugsnag:bugsnag-android-performance", version.ref = "bugsnagAndroidPerformance" }
+compose-bom = { module = "dev.chrisbanes.compose:compose-bom", version.ref = "composeBom" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+hiddenapibypass = { module = "org.lsposed.hiddenapibypass:hiddenapibypass", version.ref = "hiddenapibypass" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+bugsnag-android = { id = "com.bugsnag.android.gradle", version.ref = "bugsnagAndroidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

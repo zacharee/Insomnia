@@ -1,7 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: "com.bugsnag.android.gradle"
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.bugsnag.android)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
+}
 
 android {
     compileSdk 33
@@ -36,27 +39,24 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation(fileTree("libs") { include("*.jar") })
+    implementation(libs.kotlin.stdlib.jdk8)
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation(libs.appcompat)
+    implementation(libs.preference.ktx)
+    implementation(libs.constraintlayout)
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation(libs.gson)
+    implementation(libs.material)
 
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation libs.hiddenapibypass
 
-    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
+    implementation libs.bugsnag.android
+    implementation libs.bugsnag.android.performance
 
-    implementation "com.bugsnag:bugsnag-android:5.28.4"
-
-    implementation 'androidx.compose.material3:material3:1.1.0-beta01'
-    implementation 'androidx.compose.foundation:foundation:1.5.0-alpha01'
-    implementation 'androidx.activity:activity-compose:1.7.0'
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.4.0'
-    implementation "com.google.accompanist:accompanist-themeadapter-material3:0.30.0"
-
-    debugImplementation 'androidx.compose.ui:ui-tooling:1.4.0'
+    implementation(platform(libs.compose.bom))
+    implementation libs.compose.material3
+    implementation libs.compose.foundation
+    implementation libs.activity.compose
+    implementation libs.accompanist.themeadapter.material3
 }
