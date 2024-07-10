@@ -137,21 +137,26 @@ fun ConfigureLayout() {
                 ) {
                     itemsIndexed(times, { _, time -> time.time }) { index, time ->
                         val state = rememberSwipeToDismissBoxState(
-                            positionalThreshold = { it / 3f },
-                            confirmValueChange = {
-                                if (it != SwipeToDismissBoxValue.Settled) {
-                                    val timeIndex = times.indexOf(time)
-                                    times = times - time
-
-                                    removedTime = time to timeIndex
-                                }
-
-                                true
-                            },
+                            positionalThreshold = { it / 2f },
+                            confirmValueChange = { true },
                         )
 
+                        LaunchedEffect(state.currentValue) {
+                            if (state.currentValue == SwipeToDismissBoxValue.EndToStart || state.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+                                val timeIndex = times.indexOf(time)
+                                times = times - time
+
+                                removedTime = time to timeIndex
+
+                                state.snapTo(SwipeToDismissBoxValue.Settled)
+                            }
+                        }
+
                         DraggableItem(dragDropState = dragState, index = index) { dragging ->
-                            val elevation by animateDpAsState(targetValue = if (dragging) 8.dp else 0.dp, label = "${time.time}")
+                            val elevation by animateDpAsState(
+                                targetValue = if (dragging) 8.dp else 0.dp,
+                                label = "${time.time}"
+                            )
 
                             SwipeToDismissBox(
                                 state = state,
@@ -222,7 +227,8 @@ fun ConfigureLayout() {
 
                 AddTimeLayout(
                     onResetClicked = {
-                         times = ArrayList(App.DEFAULT_STATES)
+                        times = ArrayList(App.DEFAULT_STATES)
+                        removedTime = null
                     },
                     onTimeAdded = { newTime ->
                         if (!times.contains(WakeState(newTime))) {
@@ -290,7 +296,12 @@ fun ConfigureLayout() {
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.surfaceVariant),
                     ) {
-                        Text(text = stringResource(id = R.string.time_removed_format, rTime?.first?.createLabelFromTime(context) ?: ""))
+                        Text(
+                            text = stringResource(
+                                id = R.string.time_removed_format,
+                                rTime?.first?.createLabelFromTime(context) ?: ""
+                            )
+                        )
                     }
                 }
             }
