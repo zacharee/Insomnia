@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,7 +59,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ConfigureLayout(title: String = "TestTitle") {
+fun ConfigureLayout() {
     val context = LocalContext.current
 
     var infiniteTimeOnCharge by context.rememberPreferenceState(
@@ -110,30 +110,23 @@ fun ConfigureLayout(title: String = "TestTitle") {
                     .imePadding()
                     .systemBarsPadding(),
             ) {
-                TitleBar(
-                    title = title,
-                    showBackButton = false,
-                )
-
-                Spacer(modifier = Modifier.size(8.dp))
-
                 Text(
                     text = stringResource(id = R.string.config_hint),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                Spacer(modifier = Modifier.size(8.dp))
+                HorizontalDivider(modifier = Modifier.padding(4.dp))
 
                 CardSwitch(
                     enabled = infiniteTimeOnCharge,
                     onEnabledChanged = { infiniteTimeOnCharge = it },
                     title = stringResource(id = R.string.turn_on_plugged),
                     summary = stringResource(id = R.string.turn_on_plugged_desc),
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     titleTextStyle = MaterialTheme.typography.titleMedium,
                 )
 
-                Spacer(modifier = Modifier.size(8.dp))
+                HorizontalDivider(modifier = Modifier.padding(4.dp))
 
                 LazyColumn(
                     modifier = Modifier

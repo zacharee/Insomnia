@@ -19,7 +19,7 @@ class TimesConfigureActivity : AppCompatActivity() {
         window.navigationBarColor = Color.TRANSPARENT
 
         setContent {
-            ConfigureLayout(title = title.toString())
+            ConfigureLayout()
         }
     }
 }
