@@ -102,17 +102,17 @@ fun ConfigureLayout(title: String = "TestTitle") {
     Mdc3Theme {
         Surface(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding()
-                    .systemBarsPadding()
+                    .systemBarsPadding(),
             ) {
                 TitleBar(
                     title = title,
-                    showBackButton = false
+                    showBackButton = false,
                 )
 
                 Spacer(modifier = Modifier.size(8.dp))

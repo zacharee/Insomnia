@@ -1,21 +1,24 @@
 package com.zacharee1.insomnia.activities
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.core.view.WindowCompat
 import com.zacharee1.insomnia.compose.ConfigureLayout
-
 
 class TimesConfigureActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+        window.navigationBarColor = Color.TRANSPARENT
 
         setContent {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = !isSystemInDarkTheme()
             ConfigureLayout(title = title.toString())
         }
     }
