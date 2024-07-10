@@ -1,15 +1,21 @@
 package com.zacharee1.insomnia.util
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.zacharee1.insomnia.App
+import com.zacharee1.insomnia.R
 
 const val TAG = "Insomnia"
 
 const val KEY_STATES = "states"
+const val TURN_ON_WHEN_PLUGGED_IN = "turn_on_plugged"
 const val DELIMITER = "/"
 
 fun String.loge() {
@@ -40,12 +46,20 @@ fun Context.saveTimes(times: List<WakeState>) {
     PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STATES, TextUtils.join(DELIMITER, strings)).apply()
 }
 
+fun Context.launchOverlaySettings(launcher: Intent.() -> Unit) {
+    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.launcher()
+
+    Toast.makeText(this, R.string.enable_overlay, Toast.LENGTH_SHORT).show()
+}
+
 fun Context.activateWhenPlugged() =
         PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("turn_on_plugged", false)
+                .getBoolean(TURN_ON_WHEN_PLUGGED_IN, false)
 
 fun Context.setActivateWhenPlugged(activate: Boolean) =
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
-                .putBoolean("turn_on_plugged", activate)
+                .putBoolean(TURN_ON_WHEN_PLUGGED_IN, activate)
                 .apply()

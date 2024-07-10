@@ -47,6 +47,7 @@ import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.zacharee1.insomnia.App
 import com.zacharee1.insomnia.R
 import com.zacharee1.insomnia.util.KEY_STATES
+import com.zacharee1.insomnia.util.TURN_ON_WHEN_PLUGGED_IN
 import com.zacharee1.insomnia.util.WakeState
 import com.zacharee1.insomnia.util.activateWhenPlugged
 import com.zacharee1.insomnia.util.getSavedTimes
@@ -63,7 +64,7 @@ fun ConfigureLayout() {
     val context = LocalContext.current
 
     var infiniteTimeOnCharge by context.rememberPreferenceState(
-        key = "turn_on_plugged",
+        key = TURN_ON_WHEN_PLUGGED_IN,
         value = { context.activateWhenPlugged() },
         onChanged = { context.setActivateWhenPlugged(it) }
     )

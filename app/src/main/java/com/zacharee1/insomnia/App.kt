@@ -1,16 +1,27 @@
 package com.zacharee1.insomnia
 
 import android.app.Application
-import android.content.*
-import android.net.Uri
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.os.BatteryManager
 import android.os.Build
 import android.provider.Settings
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.bugsnag.android.Bugsnag
-import com.zacharee1.insomnia.util.*
+import com.zacharee1.insomnia.util.CycleTimer
+import com.zacharee1.insomnia.util.Event
+import com.zacharee1.insomnia.util.EventListener
+import com.zacharee1.insomnia.util.KEY_STATES
+import com.zacharee1.insomnia.util.WakeState
+import com.zacharee1.insomnia.util.activateWhenPlugged
+import com.zacharee1.insomnia.util.eventManager
+import com.zacharee1.insomnia.util.getSavedTimes
+import com.zacharee1.insomnia.util.launchOverlaySettings
+import com.zacharee1.insomnia.util.loge
 import com.zacharee1.insomnia.views.KeepAwakeView
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
@@ -116,7 +127,7 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
             sendUpdate()
             true
         } else {
-            launchOverlaySettings()
+            launchOverlaySettings { startActivity(this) }
             sendUpdate()
             false
         }
@@ -237,13 +248,5 @@ class App : Application(), SharedPreferences.OnSharedPreferenceChangeListener, E
         } else {
             disable()
         }
-    }
-
-    private fun launchOverlaySettings() {
-        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-
-        Toast.makeText(this, R.string.enable_overlay, Toast.LENGTH_SHORT).show()
     }
 }
