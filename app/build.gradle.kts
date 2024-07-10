@@ -16,6 +16,8 @@ android {
         targetSdk = 34
         versionCode = 10
         versionName = "1.8"
+
+        base.archivesName.set("Insomnia_${versionName}")
     }
     buildTypes {
         release {
