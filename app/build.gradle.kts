@@ -57,5 +57,4 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.foundation)
     implementation(libs.activity.compose)
-    implementation(libs.accompanist.themeadapter.material3)
 }
